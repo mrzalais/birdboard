@@ -12,6 +12,25 @@ class ProjectsTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
+    public function testGuestsCannotCreateProjects(): void
+    {
+        $attributes = Project::factory()->raw();
+
+        $this->post('/projects', $attributes)->assertRedirect('login');
+    }
+
+    public function testGuestsCannotViewProjects(): void
+    {
+        $this->get('/projects')->assertRedirect('login');
+    }
+
+    public function testGuestsCannotViewASingleProject(): void
+    {
+        $project = Project::factory()->create();
+
+        $this->get($project->path())->assertRedirect('login');
+    }
+
     public function testUserCanCreateAProject(): void
     {
         $this->withoutExceptionHandling();
@@ -30,17 +49,26 @@ class ProjectsTest extends TestCase
         $this->get('/projects')->assertSee($attributes['title']);
     }
 
-    public function testUserCanViewAProject(): void
+    public function testUserCanViewTheirProject(): void
     {
+        $this->be(User::factory()->create());
+
         $this->withoutExceptionHandling();
 
-        $this->actingAs(User::factory()->create());
-
-        $project = Project::factory()->create();
+        $project = Project::factory()->create(['owner_id' => auth()->id()]);
 
         $this->get($project->path())
             ->assertSee($project->title)
             ->assertSee($project->description);
+    }
+
+    public function testAnAuthenticatedUserCannotViewTheProjectsOfOthers(): void
+    {
+        $this->be(User::factory()->create());
+
+        $project = Project::factory()->create();
+
+        $this->get($project->path())->assertStatus(403);
     }
 
     public function testProjectRequiresATitle(): void
@@ -59,12 +87,5 @@ class ProjectsTest extends TestCase
         $attributes = Project::factory()->raw(['description' => '']);
 
         $this->post('/projects', $attributes)->assertSessionHasErrors('description');
-    }
-
-    public function testOnlyAuthenticatedUsersCanCreateProjects(): void
-    {
-        $attributes = Project::factory()->raw();
-
-        $this->post('/projects', $attributes)->assertRedirect('login');
     }
 }
