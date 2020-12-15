@@ -10,6 +10,19 @@ class Task extends Model
     use HasFactory;
 
     protected $fillable = [
-      'body'
+        'body',
+        'completed',
     ];
+
+    protected $touches = ['project'];
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
+    public function path(): string
+    {
+        return "/projects/{$this->project->id}/tasks/{$this->id}";
+    }
 }

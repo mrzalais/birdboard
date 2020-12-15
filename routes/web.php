@@ -23,4 +23,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Route::post('projects/{project}/tasks', 'ProjectTasksController@store')->middleware('auth');
+/*Route::resource('projects/{project}/tasks', 'ProjectTasksController')->middleware('auth');*/
+
+Route::post('/projects/{project}/tasks', 'ProjectTasksController@store')->middleware('auth');
+Route::patch('/projects/{project}/tasks/{task}', 'ProjectTasksController@update');
