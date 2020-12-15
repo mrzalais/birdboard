@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ManageProjectsTest extends TestCase
@@ -27,7 +28,7 @@ class ManageProjectsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $this->get('/projects/create')->assertStatus(200);
 
@@ -45,7 +46,7 @@ class ManageProjectsTest extends TestCase
 
     public function testUserCanViewTheirProject(): void
     {
-        $this->be(User::factory()->create());
+        $this->signIn();
 
         $this->withoutExceptionHandling();
 
@@ -53,7 +54,7 @@ class ManageProjectsTest extends TestCase
 
         $this->get($project->path())
             ->assertSee($project->title)
-            ->assertSee($project->description);
+            ->assertSee(Str::limit($project->description, 50));
     }
 
     public function testAnAuthenticatedUserCannotViewTheProjectsOfOthers(): void
@@ -67,7 +68,7 @@ class ManageProjectsTest extends TestCase
 
     public function testProjectRequiresATitle(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $attributes = Project::factory()->raw(['title' => '']);
 
@@ -76,7 +77,7 @@ class ManageProjectsTest extends TestCase
 
     public function testProjectRequiresADescription(): void
     {
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $attributes = Project::factory()->raw(['description' => '']);
 

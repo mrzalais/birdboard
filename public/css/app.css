@@ -31344,6 +31344,11 @@ video {
           animation: bounce 1s infinite;
 }
 
+.section {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
 .btn {
   --tw-bg-opacity: 1;
   background-color: rgba(34, 211, 238, var(--tw-bg-opacity));
@@ -31365,6 +31370,15 @@ video {
   --tw-text-opacity: 1;
   color: rgba(255, 255, 255, var(--tw-text-opacity));
   box-shadow: 0 2px 7px 0 #b0eaff;
+}
+
+.card {
+  --tw-bg-opacity: 1;
+  background-color: rgba(255, 255, 255, var(--tw-bg-opacity));
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  --tw-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
 @media (min-width: 640px) {

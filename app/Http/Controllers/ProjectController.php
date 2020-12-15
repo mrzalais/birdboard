@@ -3,35 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class ProjectController extends Controller
 {
-    public function index()
+    public function index(): view
     {
         $projects = auth()->user()->projects;
 
         return view('projects.index', compact('projects'));
     }
 
-    public function create()
+    public function create(): view
     {
         return view('projects.create');
     }
 
-    public function store()
+    public function store(): RedirectResponse
     {
         $attributes = request()->validate([
             'title' => 'required',
             'description' => 'required',
         ]);
 
-        auth()->user()->projects()->create($attributes);
+        $project = auth()->user()->projects()->create($attributes);
 
-        return redirect('/projects');
+        return redirect($project->path());
     }
 
-    public function show(Project $project)
+    public function show(Project $project): view
     {
         if (auth()->user()->isNot($project->owner)) {
             abort(403);
