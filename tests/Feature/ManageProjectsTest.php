@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
-class ProjectsTest extends TestCase
+class ManageProjectsTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
 
@@ -37,6 +37,12 @@ class ProjectsTest extends TestCase
     }
 
     /** @test */
+    public function guest_cannot_view_create_project_page(): void
+    {
+        $this->get('/projects/create')->assertRedirect('login');
+    }
+
+    /** @test */
     public function a_user_can_create_a_project(): void
     {
         $this->withoutExceptionHandling();
@@ -45,6 +51,8 @@ class ProjectsTest extends TestCase
 
         /** @var Authenticatable $user */
         $this->actingAs($user);
+
+        $this->get('/projects/create')->assertStatus(200);
 
         $attributes = [
             'title' => $this->faker->sentence,
