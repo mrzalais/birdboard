@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
 class ProjectsTest extends TestCase
@@ -14,11 +15,25 @@ class ProjectsTest extends TestCase
     use WithFaker, RefreshDatabase;
 
     /** @test */
-    public function only_authenticated_users_can_create_projects(): void
+    public function guest_cannot_create_projects(): void
     {
-        $project = Project::factory()->raw();
+        $attributes = Project::factory()->raw();
 
-        $this->post('/projects', $project)->assertRedirect('login');
+        $this->post('/projects', $attributes)->assertRedirect('login');
+    }
+
+    /** @test */
+    public function guest_cannot_view_projects(): void
+    {
+        $this->get('/projects')->assertRedirect('login');
+    }
+
+    /** @test */
+    public function guest_cannot_view_a_single_project(): void
+    {
+        $project = Project::factory()->create();
+
+        $this->get($project->path())->assertRedirect('login');
     }
 
     /** @test */
@@ -44,15 +59,33 @@ class ProjectsTest extends TestCase
     }
 
     /** @test */
-    public function a_user_can_view_a_project(): void
+    public function a_user_can_view_their_project(): void
     {
+        $user = User::factory()->create();
+
+        /** @var Authenticatable $user */
+        $this->actingAs($user);
+
         $this->withoutExceptionHandling();
 
-        $project = Project::factory()->create();
+        $project = Project::factory()->create(['owner_id' => auth()->id()]);
 
         $this->get($project->path())
             ->assertSee($project->title)
             ->assertSee($project->description);
+    }
+
+    /** @test */
+    public function an_authenticated_user_cannot_view_the_projects_of_others(): void
+    {
+        $user = User::factory()->create();
+
+        /** @var Authenticatable $user */
+        $this->actingAs($user);
+
+        $project = Project::factory()->create();
+
+        $this->get($project->path())->assertStatus(Response::HTTP_FORBIDDEN);
     }
 
     /** @test */
