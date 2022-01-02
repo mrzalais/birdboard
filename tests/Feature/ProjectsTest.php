@@ -3,6 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
+use App\Models\User;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -12,14 +14,26 @@ class ProjectsTest extends TestCase
     use WithFaker, RefreshDatabase;
 
     /** @test */
+    public function only_authenticated_users_can_create_projects(): void
+    {
+        $project = Project::factory()->raw();
+
+        $this->post('/projects', $project)->assertRedirect('login');
+    }
+
+    /** @test */
     public function a_user_can_create_a_project(): void
     {
         $this->withoutExceptionHandling();
 
+        $user = User::factory()->create();
+
+        /** @var Authenticatable $user */
+        $this->actingAs($user);
+
         $attributes = [
             'title' => $this->faker->sentence,
             'description' => $this->faker->paragraph,
-
         ];
 
         $this->post('/projects', $attributes)->assertRedirect('/projects');
@@ -44,18 +58,26 @@ class ProjectsTest extends TestCase
     /** @test */
     public function a_project_requires_a_title(): void
     {
+        $user = User::factory()->create();
+
+        /** @var Authenticatable $user */
+        $this->actingAs($user);
+
         $project = Project::factory()->raw(['title' => '']);
 
-        $this->post('/projects', $project)
-            ->assertSessionHasErrors('title');
+        $this->post('/projects', $project)->assertSessionHasErrors('title');
     }
 
     /** @test */
     public function a_project_requires_a_description(): void
     {
+        $user = User::factory()->create();
+
+        /** @var Authenticatable $user */
+        $this->actingAs($user);
+
         $project = Project::factory()->raw(['description' => '']);
 
-        $this->post('/projects', $project)
-            ->assertSessionHasErrors('description');
+        $this->post('/projects', $project)->assertSessionHasErrors('description');
     }
 }
