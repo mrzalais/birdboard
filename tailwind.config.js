@@ -9,12 +9,14 @@ module.exports = {
     ],
     darkMode: false, // or 'media' or 'class'
     theme: {
-        extend: {},
+        extend: {
+            colors: {
+                'gray-background': '#F5F6F9',
+            }
+        },
     },
     variants: {
         extend: {},
     },
-    plugins: [
-
-    ],
+    plugins: [],
 }
