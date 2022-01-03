@@ -12,6 +12,8 @@ class Task extends Model
 
     protected $guarded = [];
 
+    protected $touches = ['project'];
+
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
