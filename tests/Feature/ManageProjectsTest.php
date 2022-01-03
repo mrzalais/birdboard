@@ -3,10 +3,9 @@
 namespace Tests\Feature;
 
 use App\Models\Project;
-use App\Models\User;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 use Tests\TestCase;
 
@@ -47,10 +46,7 @@ class ManageProjectsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $user = User::factory()->create();
-
-        /** @var Authenticatable $user */
-        $this->actingAs($user);
+        $this->signIn();
 
         $this->get('/projects/create')->assertStatus(200);
 
@@ -69,10 +65,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function a_user_can_view_their_project(): void
     {
-        $user = User::factory()->create();
-
-        /** @var Authenticatable $user */
-        $this->actingAs($user);
+        $this->signIn();
 
         $this->withoutExceptionHandling();
 
@@ -80,16 +73,13 @@ class ManageProjectsTest extends TestCase
 
         $this->get($project->path())
             ->assertSee($project->title)
-            ->assertSee($project->description);
+            ->assertSee(Str::limit($project->description, 50));
     }
 
     /** @test */
     public function an_authenticated_user_cannot_view_the_projects_of_others(): void
     {
-        $user = User::factory()->create();
-
-        /** @var Authenticatable $user */
-        $this->actingAs($user);
+        $this->signIn();
 
         $project = Project::factory()->create();
 
@@ -99,10 +89,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function a_project_requires_a_title(): void
     {
-        $user = User::factory()->create();
-
-        /** @var Authenticatable $user */
-        $this->actingAs($user);
+        $this->signIn();
 
         $project = Project::factory()->raw(['title' => '']);
 
@@ -112,10 +99,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function a_project_requires_a_description(): void
     {
-        $user = User::factory()->create();
-
-        /** @var Authenticatable $user */
-        $this->actingAs($user);
+        $this->signIn();
 
         $project = Project::factory()->raw(['description' => '']);
 
