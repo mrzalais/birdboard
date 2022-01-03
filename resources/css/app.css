@@ -2,14 +2,16 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
-.shadow {
-    --tw-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.08),
-}
-
 .button {
     border-radius: 8px;
     font-size: 14px;
     color: white;
     box-shadow: 0 2px 7px 0 #b0eaff;
     padding: 0.5rem 1rem;
+}
+
+.card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.25rem;
 }
