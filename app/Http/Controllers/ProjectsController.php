@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
-use Symfony\Component\HttpFoundation\Response;
 
 class ProjectsController extends Controller
 {
