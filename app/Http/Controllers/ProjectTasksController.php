@@ -4,15 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\Task;
-use Symfony\Component\HttpFoundation\Response;
 
 class ProjectTasksController extends Controller
 {
     public function store(Project $project)
     {
-        if (auth()->user()->isNot($project->owner)) {
-            abort(Response::HTTP_FORBIDDEN);
-        }
+        $this->authorize('update', $project);
+
         request()->validate(['body' => 'required']);
         $project->addTask(request('body'));
 
@@ -21,9 +19,7 @@ class ProjectTasksController extends Controller
 
     public function update(Project $project, Task $task)
     {
-        if (auth()->user()->isNot($project->owner)) {
-            abort(Response::HTTP_FORBIDDEN);
-        }
+        $this->authorize('update', $task->project);
 
         request()->validate(['body' => 'required']);
 
