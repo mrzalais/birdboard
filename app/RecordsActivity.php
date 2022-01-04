@@ -33,7 +33,7 @@ trait RecordsActivity
 
     protected static function recordableEvents(): array
     {
-        return static::$recordableEvents ?? ['created', 'updated', 'deleted'];
+        return static::$recordableEvents ?? ['created', 'updated'];
     }
 
     public function recordActivity(string $description): void
