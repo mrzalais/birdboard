@@ -79,6 +79,7 @@ class ManageProjectsTest extends TestCase
     /** @test */
     public function a_user_can_update_project(): void
     {
+        $this->withoutExceptionHandling();
         $this->signIn();
 
         $project = ProjectFactory::create();
