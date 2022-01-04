@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\RecordsActivity;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -9,11 +10,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Project extends Model
 {
-    use HasFactory;
+    use HasFactory, RecordsActivity;
 
     protected $guarded = [];
-
-    public $old = [];
 
     public function path(): string
     {
@@ -33,29 +32,5 @@ class Project extends Model
     public function addTask($body): Model
     {
         return $this->tasks()->create(compact('body'));
-    }
-
-    public function activity(): HasMany
-    {
-        return $this->hasMany(Activity::class)->latest();
-    }
-
-    public function recordActivity(string $description): void
-    {
-        $this->activity()->create([
-            'description' => $description,
-            'changes' => $this->activityChanges($description),
-        ]);
-    }
-
-    public function activityChanges($description): ?array
-    {
-        if ($description === 'updated') {
-            return [
-                'before' => array_diff($this->old, $this->getAttributes()),
-                'after' => $this->getChanges(),
-            ];
-        }
-        return null;
     }
 }
