@@ -5,6 +5,7 @@ namespace App;
 use App\Models\Activity;
 use App\Models\Project;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Arr;
 
 trait RecordsActivity
 {
@@ -38,6 +39,7 @@ trait RecordsActivity
     public function recordActivity(string $description): void
     {
         $this->activity()->create([
+            'user_id' => ($this->project ?? $this)->owner->id,
             'description' => $description,
             'changes' => $this->activityChanges(),
             'project_id' => class_basename($this) === 'Project' ? $this->id : $this->project_id,
@@ -57,8 +59,8 @@ trait RecordsActivity
     {
         if ($this->wasChanged()) {
             return [
-                'before' => array_diff($this->oldAttributes, $this->getAttributes()),
-                'after' => $this->getChanges(),
+                'before' => Arr::except(array_diff($this->oldAttributes, $this->getAttributes()), 'updated_at'),
+                'after' => Arr::except($this->getChanges(), 'updated_at'),
             ];
         }
         return null;
