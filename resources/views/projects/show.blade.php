@@ -3,8 +3,8 @@
 @section('content')
     <header class="flex items-center mb-6 pb-4">
         <div class="flex justify-between items-end w-full">
-            <p class="text-muted font-light">
-                <a href="/projects" class="text-muted no-underline hover:underline">My Projects</a>
+            <p class="text-default font-light">
+                <a href="/projects" class="text-default no-underline hover:underline">My Projects</a>
                 / {{ $project->title }}
             </p>
 
@@ -30,11 +30,11 @@
         <div class="lg:flex -mx-3">
             <div class="lg:w-3/4 px-3 mb-6">
                 <div class="mb-8">
-                    <h2 class="text-lg text-muted font-light mb-3">Tasks</h2>
+                    <h2 class="text-lg text-default font-light mb-3">Tasks</h2>
 
                     {{-- tasks --}}
                     @foreach ($project->tasks as $task)
-                        <div class="card mb-3">
+                        <div class="bg-card card mb-3">
                             <form method="POST" action="{{ $task->path() }}">
                                 @method('PATCH')
                                 @csrf
@@ -44,7 +44,7 @@
                                         name="body"
                                         value="{{ $task->body }}"
                                         class="text-default bg-card w-full
-                                            {{ $task->completed ? 'line-through text-muted' : '' }}"
+                                            {{ $task->completed ? 'line-through text-default' : '' }}"
                                     >
                                     <input
                                         name="completed"
@@ -57,7 +57,7 @@
                         </div>
                     @endforeach
 
-                    <div class="card mb-3">
+                    <div class="bg-card card mb-3">
                         <form action="{{ $project->path() . '/tasks' }}" method="POST">
                             @csrf
 
@@ -67,7 +67,7 @@
                 </div>
 
                 <div>
-                    <h2 class="text-lg text-muted font-light mb-3">General Notes</h2>
+                    <h2 class="text-lg text-default font-light mb-3">General Notes</h2>
 
                     {{-- general notes --}}
                     <form method="POST" action="{{ $project->path() }}">
@@ -76,7 +76,7 @@
 
                         <textarea
                             name="notes"
-                            class="card text-default w-full mb-4"
+                            class="bg-card card text-default w-full mb-4"
                             style="min-height: 200px"
                             placeholder="Anything special that you want to make a note of?"
                         >{{ $project->notes }}</textarea>

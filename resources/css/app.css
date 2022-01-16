@@ -11,7 +11,24 @@
 }
 
 .card {
-    background-color: white;
     border-radius: 8px;
     padding: 1.25rem;
+}
+
+.theme-light {
+    --page-background-color: #F5F6F9;
+    --card-background-color: white;
+    --button-background-color: #47CDFF;
+    --header-background-color: white;
+
+    --text-default-color: #222;
+}
+
+.theme-dark {
+    --page-background-color: #17171E;
+    --card-background-color: #1F2027;
+    --button-background-color: #59B6F9;
+    --header-background-color: #1F2027;
+
+    --text-default-color: #ffffff;
 }
